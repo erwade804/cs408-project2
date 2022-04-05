@@ -34,10 +34,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE "+TABLE_OF_WORDS+" (arg0 text, arg1 text, arg2 text, arg3 text, arg4 text, arg5 text)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
-    public void deleteTable(SQLiteDatabase db){
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OF_WORDS);
-        onCreate(db);
-    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -62,32 +59,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public void deleteWord(String word){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_OF_WORDS, WORD+"="+word, null);
-    }
-
-    public Word getWord(String word) {
-
-        String query = "SELECT * FROM " + TABLE_OF_WORDS + " WHERE " + WORD + " = '" + word + "'";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        Word c = null;
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst();
-            String[] args = new String[7];
-            for(int i = 1; i < 4; i++){
-                args[i] = cursor.getString(i);
-            }
-            cursor.close();
-            c = new Word(args);
-        }
-
-        db.close();
-        return c;
-
-    }
 
     private Word createWord(String row, String col, String box, String dir, String word, String clue){
         String[] args = new String[6];
@@ -125,7 +96,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<Word> getAllWordsAsList() {
+    private ArrayList<Word> getAllWordsAsList() {
 
         String query = "SELECT * FROM " + TABLE_OF_WORDS;
 
