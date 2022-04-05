@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         CrosswordViewModel model = new ViewModelProvider(this).get(CrosswordViewModel.class);
         model.init(this);
 
+
     }
 
 }

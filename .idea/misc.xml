@@ -5,10 +5,14 @@
       <map>
         <entry key="..\:/Users/JAY/AndroidStudioProjects/Project2/app/src/main/res/drawable/closed_square.xml" value="0.29128205128205126" />
         <entry key="..\:/Users/JAY/AndroidStudioProjects/Project2/app/src/main/res/layout/activity_main.xml" value="0.26296296296296295" />
+        <entry key="..\:/Users/JSU/AndroidStudioProjects/cs408-project2/app/src/main/res/layout/activity_main.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/JSU/AndroidStudioProjects/cs408-project2/app/src/main/res/layout/fragment_clue.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/JSU/AndroidStudioProjects/cs408-project2/app/src/main/res/layout/fragment_puzzle.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/JSU/AndroidStudioProjects/cs408-project2/app/src/main/res/layout/tab_container.xml" value="0.20520833333333333" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,5 +1,7 @@
 package edu.jsu.mcis.cs408.project2;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -7,6 +9,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.jsu.mcis.cs408.project2.databinding.FragmentPuzzleBinding;
@@ -118,6 +122,38 @@ public class PuzzleFragment extends Fragment implements TabFragment {
         if (box != 0) {
             String message = "R" + row + "C" + column + ": #" + box;
             Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+
+            // INSERT CODE HERE FOR DEALING WITH ALERT DIALOG
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            alert.setTitle("Enter Text!");
+            final EditText input = new EditText(getContext());
+            alert.setView(input);
+            alert.setPositiveButton("Enter", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String value = input.getText().toString();
+                    value = value.toUpperCase();
+                    model.guessWord(box, value);
+                    if(model.isFinished()){
+                        AlertDialog.Builder win = new AlertDialog.Builder(getContext());
+                        win.setTitle("You win!");
+                        win.setMessage("You have gotten all the words in the crossword puzzle!");
+                        win.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        win.show();
+                    }
+                    updateGrid();
+                }
+            });
+            alert.show();
+
+
+
         }
 
     }
@@ -239,7 +275,7 @@ public class PuzzleFragment extends Fragment implements TabFragment {
 
     /* Methods for Updating the Grid */
 
-    private void updateGrid() {
+    public void updateGrid() {
 
         // Get Grid Data from Model
 

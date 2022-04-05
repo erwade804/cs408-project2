@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,8 +19,12 @@ public class CrosswordViewModel extends ViewModel {
     private static final int WORD_HEADER_FIELDS = 2;
     public static final char BLOCK_CHAR = '*';
     public static final char BLANK_CHAR = ' ';
+    public static final WordDirection ACROSS = WordDirection.ACROSS;
+    public static final WordDirection DOWN = WordDirection.DOWN;
 
     private static final String TAG = "CrosswordViewModel";
+
+    private DatabaseHandler db;
 
     private final MutableLiveData<HashMap<String, Word>> words = new MutableLiveData<>();
 
@@ -35,20 +40,73 @@ public class CrosswordViewModel extends ViewModel {
     // Initialize Shared Model
 
     public void init(Context context) {
+        db = new DatabaseHandler(context.getApplicationContext(), null, null, 1);
+
 
         if (words.getValue() == null) {
             loadWords(context);
-            addAllWordsToGrid(); // for testing only; remove later!
+            try{
+                ArrayList<String> wordkeys = db.getAllWords();
+                for(String i : wordkeys){
+                    int j = Integer.parseInt(i.split(" ")[1]);
+                    String word = i.split(" ")[0];
+                    guessWord(j, word);
+                }
+            }catch  (Exception e) {
+            }
         }
 
     }
 
     // Add Word to Grid
+    public void guessWord(int box, String guess){
+
+        HashMap<String, Word> word = words.getValue();
+
+        /*  try catch for null pointer exceptions  */
+
+        try { // if there is a word at location "box" across add the word to the see-able grid
+            if (word.get(box + "A").getWord().equals(guess)) {
+                addWordToGrid(box+"A");
+                db.addWordToStoredWords(word.get(box+"A"));
+                //saveToDatabase(word.get(box+"A"));
+            }else if (word.get(box + "D").getWord().equals(guess)) {// if there is a word at location "box" down then add the word to the grid
+                addWordToGrid(box + "D");
+                db.addWordToStoredWords(word.get(box+"D"));
+                //saveToDatabase(word.get(box+"D"));
+            }
+        }catch(Exception a){
+            try{ // if there is a word at location "box" down then add the word to the grid
+                if (word.get(box + "D").getWord().equals(guess)) {
+                    addWordToGrid(box + "D");
+                    db.addWordToStoredWords(word.get(box+"D"));
+                }
+            }catch(Exception d){
+                // do nothing
+            }
+        }
+
+    }
+
+    public boolean isFinished(){
+        char[][] lets = letters.getValue();;
+        try {
+            for (char[] i : lets) {
+                for (char j : i) {
+                    if (j == BLANK_CHAR) {
+                        return false;
+                    }
+                }
+            }
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
 
     private void addWordToGrid(String key) {
 
         // Get word from collection (look up using the given key)
-
         Word word = Objects.requireNonNull(words.getValue()).get(key);
 
         // Was the word found in the collection?
@@ -61,20 +119,27 @@ public class CrosswordViewModel extends ViewModel {
             int column = word.getColumn();
             String w = word.getWord();
 
+            char[][] lets = letters.getValue();
             // Add word to Letters array, one character at a time
 
-            /*
+            // letters is the variable for the boar
 
-                INSERT YOUR CODE HERE
-
-            */
+            for (int i = 0; i < w.length(); i++){
+                assert lets != null;
+                if (word.getDirection() == ACROSS){
+                    lets[row][column+i] = w.charAt(i);
+                }else{
+                    lets[row+i][column] = w.charAt(i);
+                }
+            }
+            letters.postValue(lets);
 
         }
+
 
     }
 
     // Add all words to grid (for testing purposes only!)
-
     private void addAllWordsToGrid() {
         for (Map.Entry<String, Word> e : Objects.requireNonNull(words.getValue()).entrySet()) {
             addWordToGrid( e.getKey() );
@@ -146,20 +211,27 @@ public class CrosswordViewModel extends ViewModel {
                         nArray[row][column] = word.getBox();
 
                         // Clear grid squares
-
-                        /*
-
-                            INSERT YOUR CODE HERE
-
-                        */
-
+                        String w = word.getWord();
+                        for (int i = 0; i < w.length(); i++) {
+                            try {
+                                if (word.getDirection() == ACROSS) {
+                                    lArray[row][column + i] = BLANK_CHAR;
+                                } else {
+                                    lArray[row + i][column] = BLANK_CHAR;
+                                }
+                            } catch (Exception e) {
+                                // nothing
+                            }
+                        }
                         // Append Clue to StringBuilder (either clueAcrossBuffer or clueDownBuffer)
 
-                        /*
+                        if(word.getDirection() == ACROSS){
 
-                            INSERT YOUR CODE HERE
-
-                        */
+                            clueAcrossBuffer.append(word.getBox() + " " + word.getClue()+"\n");
+                        }
+                        else{
+                            clueDownBuffer.append(word.getBox() + " " + word.getClue()+"\n");
+                        }
 
                         // Create unique key; add word to collection
 
